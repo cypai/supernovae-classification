@@ -1,0 +1,15 @@
+net: "/home/charliep/proj/hdf5_classification/train.prototxt"
+test_iter: 1000
+test_interval: 1000
+base_lr: 0.0001
+lr_policy: "inv"
+gamma: 0.0001
+power: 0.9
+#stepsize: 1000
+display: 1000
+max_iter: 10000
+momentum: 0.9
+weight_decay: 0.0005
+snapshot: 1000
+snapshot_prefix: "/home/charliep/proj/hdf5_classification/data/train"
+solver_mode: GPU

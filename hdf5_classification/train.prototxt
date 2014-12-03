@@ -1,0 +1,96 @@
+name: "TestNet"
+layers {
+  name: "data"
+  type: HDF5_DATA
+  top: "data"
+  top: "label"
+  hdf5_data_param {
+    source: "/home/charliep/proj/hdf5_classification/data/train.txt"
+    batch_size: 10
+  }
+  include: { phase: TRAIN }
+}
+layers {
+  name: "data"
+  type: HDF5_DATA
+  top: "data"
+  top: "label"
+  hdf5_data_param {
+    source: "/home/charliep/proj/hdf5_classification/data/test.txt"
+    batch_size: 10
+  }
+  include: { phase: TEST }
+}
+layers {
+  name: "lrn1"
+  type: LRN
+  bottom: "data"
+  top: "lrn1"
+  lrn_param {
+    local_size: 3
+    norm_region: WITHIN_CHANNEL
+  }
+}
+layers {
+  name: "relu1"
+  type: RELU
+  bottom: "lrn1"
+  top: "lrn1"
+}
+layers {
+  name: "ip1"
+  type: INNER_PRODUCT
+  bottom: "lrn1"
+  top: "ip1"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1"
+  type: RELU
+  bottom: "ip1"
+  top: "ip1"
+}
+layers {
+  name: "ip2"
+  type: INNER_PRODUCT
+  bottom: "ip1"
+  top: "ip2"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layers {
+  name: "loss"
+  type: SOFTMAX_LOSS
+  bottom: "ip2"
+  bottom: "label"
+  top: "loss"
+}
+layers {
+  name: "accuracy"
+  type: ACCURACY
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include: { phase: TEST }
+}
